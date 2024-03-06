@@ -19,6 +19,8 @@ public class ProtoViewModel extends AndroidViewModel {
 
     private final ScheduledExecutorService mExecutor = Executors.newSingleThreadScheduledExecutor();
     private final MutableLiveData<State> mState = new MutableLiveData<>();
+    private final MutableLiveData<float[]> mWavData = new MutableLiveData<>();
+    private final MutableLiveData<float[]> mFftData = new MutableLiveData<>();
     private final ProtoPlayManager mManager;
 
     public enum State { STARTING, START, STOPPING, STOP }
@@ -28,6 +30,18 @@ public class ProtoViewModel extends AndroidViewModel {
         sLogger.trace("");
 
         mManager = ((ProtoApp) application).getPlayManager();
+        mManager.setCallback(new ProtoPlayManager.Callback() {
+            @Override
+            public void onWavData(float[] data) {
+                sLogger.trace("data.length={}", data.length);
+                mWavData.postValue(data);
+            }
+            @Override
+            public void onFftData(float[] data) {
+                sLogger.trace("data.length={}", data.length);
+                mFftData.postValue(data);
+            }
+        });
         mState.setValue(State.STOP);
     }
 
@@ -79,5 +93,13 @@ public class ProtoViewModel extends AndroidViewModel {
 
     public LiveData<State> getState() {
         return mState;
+    }
+
+    public LiveData<float[]> getWavData() {
+        return mWavData;
+    }
+
+    public LiveData<float[]> getFftData() {
+        return mFftData;
     }
 }

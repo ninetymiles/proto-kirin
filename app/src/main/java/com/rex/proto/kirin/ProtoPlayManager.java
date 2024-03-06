@@ -15,10 +15,11 @@ public class ProtoPlayManager {
 
     private AudioSource mSource;
     private AudioSink mSink;
+    private Callback mCallback;
 
     public interface Callback {
-        void onStart();
-        void onStop();
+        void onWavData(float[] data);
+        void onFftData(float[] data);
     }
 
     public ProtoPlayManager() {
@@ -35,14 +36,28 @@ public class ProtoPlayManager {
         mSinkFactory = factory;
     }
 
+    public void setCallback(Callback cb) {
+        sLogger.trace("cb:{}", cb);
+        mCallback = cb;
+    }
+
     public boolean start() {
         sLogger.trace("");
         mSource = (mSourceFactory != null) ? mSourceFactory.create() : null;
         mSink = (mSinkFactory != null) ? mSinkFactory.create() : null;
         if (mSink instanceof AudioSinkPlayer) {
             AudioSinkPlayer sinkPlayer = (AudioSinkPlayer) mSink;
-            AudioSinkVisualizer visualizer = new AudioSinkVisualizer(mSink);
-            visualizer.setSessionProvider(() -> sinkPlayer.getSessionId());
+            AudioSinkVisualizer visualizer = new AudioSinkVisualizer(mSink)
+                    .setSessionProvider(() -> sinkPlayer.getSessionId())
+                    .setCallback((fmt, data) -> {
+                        sLogger.trace("fmt={} data.length={}", fmt, data.length);
+                        if (mCallback != null) {
+                            switch (fmt) {
+                            case AudioSinkVisualizer.Callback.WAV: mCallback.onWavData(data); break;
+                            case AudioSinkVisualizer.Callback.FFT: mCallback.onFftData(data); break;
+                            }
+                        }
+                    });
             mSink = visualizer;
         }
         if (mSource != null) {

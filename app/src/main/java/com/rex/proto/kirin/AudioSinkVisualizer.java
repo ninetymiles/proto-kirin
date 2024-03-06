@@ -100,9 +100,9 @@ public class AudioSinkVisualizer extends AudioSink.Wrapper {
             int n = waveform.length;
             float[] wave = new float[n];
             for (int i = 0; i < n; i++) {
-                wave[i] = (float) waveform[i] / 0xFF;
+                wave[i] = (float) (waveform[i] + 128) / 0xFF; // Normalize to [0,1]
             }
-            sLogger.trace("wave:{} {}", wave.length, wave);
+            //sLogger.trace("wave:{} {}", wave.length, wave);
 
             if (mCallback != null) {
                 mCallback.onData(Callback.WAV, wave);
@@ -115,14 +115,14 @@ public class AudioSinkVisualizer extends AudioSink.Wrapper {
             int n = fft.length;
             float[] magnitudes = new float[n / 2 + 1];
             //float[] phases = new float[n / 2 + 1];
-            magnitudes[0] = (float)Math.abs(fft[0]);      // DC
-            magnitudes[n / 2] = (float)Math.abs(fft[1]);  // Nyquist
+            magnitudes[0] = (float) Math.abs(fft[0]);      // DC
+            magnitudes[n / 2] = (float) Math.abs(fft[1]);  // Nyquist
             for (int k = 1; k < n / 2; k++) {
                 int i = k * 2;
-                magnitudes[k] = (float)Math.hypot(fft[i], fft[i + 1]);
-                //phases[k] = (float)Math.atan2(fft[i + 1], fft[i]);
+                magnitudes[k] = (float) Math.hypot(fft[i], fft[i + 1]);
+                //phases[k] = (float) Math.atan2(fft[i + 1], fft[i]);
             }
-            sLogger.trace("magnitudes:{} {}", magnitudes.length, magnitudes);
+            //sLogger.trace("magnitudes:{} {}", magnitudes.length, magnitudes);
             //sLogger.trace("phases:{}", phases);
 
             if (mCallback != null) {

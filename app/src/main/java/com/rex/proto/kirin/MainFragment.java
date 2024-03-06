@@ -24,6 +24,9 @@ public class MainFragment extends Fragment {
     private ProtoViewModel mViewModel;
     private ProtoViewModel.State mState;
 
+    private float[] mWavData;
+    private float[] mFftData;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,20 @@ public class MainFragment extends Fragment {
                     break;
                 }
                 mBinding.mainStatus.setText(String.valueOf(state));
+            }
+        });
+        mViewModel.getWavData().observe(getViewLifecycleOwner(), new Observer<float[]>() {
+            @Override
+            public void onChanged(float[] data) {
+                sLogger.trace("data.length=<{}>", data);
+                mWavData = data;
+            }
+        });
+        mViewModel.getFftData().observe(getViewLifecycleOwner(), new Observer<float[]>() {
+            @Override
+            public void onChanged(float[] data) {
+                sLogger.trace("data.length=<{}>", data);
+                mFftData = data;
             }
         });
 
