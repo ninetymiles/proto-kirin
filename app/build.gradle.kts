@@ -13,7 +13,14 @@ android {
         targetSdk = 34
 
         versionName = "1.0"
-        versionCode = 1 // Integer.parseInt((['git', '-C', projectDir.toString(), 'rev-list', '--count', 'HEAD'].execute().text).trim())
+        versionCode = Integer.parseInt(ProcessBuilder("git", "rev-list", "--count", "HEAD")
+                .directory(rootDir)
+                .redirectOutput(ProcessBuilder.Redirect.PIPE)
+                .start()
+                .inputStream
+                .bufferedReader()
+                .readText()
+                .trim())
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
