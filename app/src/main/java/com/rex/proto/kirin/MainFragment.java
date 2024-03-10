@@ -23,14 +23,13 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding mBinding;
     private ProtoViewModel mViewModel;
     private ProtoViewModel.State mState;
-
-    private float[] mWavData;
-    private float[] mFftData;
+    private AudioFxRender mFxRender;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sLogger.trace("");
+        mFxRender = new AudioFxRender();
     }
 
     @Override
@@ -66,18 +65,23 @@ public class MainFragment extends Fragment {
         mViewModel.getWavData().observe(getViewLifecycleOwner(), new Observer<float[]>() {
             @Override
             public void onChanged(float[] data) {
-                sLogger.trace("data.length=<{}>", data);
-                mWavData = data;
+                sLogger.trace("data.length=<{}>", data.length);
+                if (mFxRender != null) {
+                    mFxRender.updateWavData(data);
+                }
             }
         });
         mViewModel.getFftData().observe(getViewLifecycleOwner(), new Observer<float[]>() {
             @Override
             public void onChanged(float[] data) {
-                sLogger.trace("data.length=<{}>", data);
-                mFftData = data;
+                sLogger.trace("data.length=<{}>", data.length);
+                if (mFxRender != null) {
+                    mFxRender.updateFftData(data);
+                }
             }
         });
 
+        mBinding.mainVisualizer.getHolder().addCallback(mFxRender);
         mBinding.mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +105,7 @@ public class MainFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         sLogger.trace("");
+        mBinding.mainVisualizer.getHolder().removeCallback(mFxRender);
         mBinding = null;
     }
 
@@ -108,5 +113,6 @@ public class MainFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         sLogger.trace("");
+        mFxRender = null;
     }
 }

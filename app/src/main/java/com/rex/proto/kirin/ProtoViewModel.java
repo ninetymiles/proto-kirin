@@ -33,12 +33,12 @@ public class ProtoViewModel extends AndroidViewModel {
         mManager.setCallback(new ProtoPlayManager.Callback() {
             @Override
             public void onWavData(float[] data) {
-                sLogger.trace("data.length={}", data.length);
+                //sLogger.trace("data.length={}", data.length);
                 mWavData.postValue(data);
             }
             @Override
             public void onFftData(float[] data) {
-                sLogger.trace("data.length={}", data.length);
+                //sLogger.trace("data.length={}", data.length);
                 mFftData.postValue(data);
             }
         });

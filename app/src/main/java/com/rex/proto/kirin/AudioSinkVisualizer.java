@@ -96,7 +96,7 @@ public class AudioSinkVisualizer extends AudioSink.Wrapper {
         @Override
         public void onWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) {
             //sLogger.trace("visualizer:{} waveform.length:{} samplingRate:{}", visualizer.hashCode(), waveform.length, samplingRate);
-            //sLogger.trace("{}", StringUtils.byteArrayToHexString(waveform));
+            //sLogger.trace("waveform:{} {}", waveform.length, waveform);
             int n = waveform.length;
             float[] wave = new float[n];
             for (int i = 0; i < n; i++) {
@@ -111,7 +111,7 @@ public class AudioSinkVisualizer extends AudioSink.Wrapper {
         @Override
         public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
             //sLogger.trace("visualizer:{} fft.length:{} samplingRate:{}", visualizer.hashCode(), fft.length, samplingRate);
-            //sLogger.trace("{}", StringUtils.byteArrayToHexString(fft));
+            //sLogger.trace("fft:{} {}", fft.length, fft);
             int n = fft.length;
             float[] magnitudes = new float[n / 2 + 1];
             //float[] phases = new float[n / 2 + 1];
@@ -123,7 +123,7 @@ public class AudioSinkVisualizer extends AudioSink.Wrapper {
                 //phases[k] = (float) Math.atan2(fft[i + 1], fft[i]);
             }
             //sLogger.trace("magnitudes:{} {}", magnitudes.length, magnitudes);
-            //sLogger.trace("phases:{}", phases);
+            //sLogger.trace("phases:{} {}", phases.length, phases);
 
             if (mCallback != null) {
                 mCallback.onData(Callback.FFT, magnitudes);
