@@ -65,7 +65,7 @@ public class MainFragment extends Fragment {
         mViewModel.getWavData().observe(getViewLifecycleOwner(), new Observer<float[]>() {
             @Override
             public void onChanged(float[] data) {
-                sLogger.trace("data.length=<{}>", data.length);
+                //sLogger.trace("data.length=<{}>", data.length);
                 if (mFxRender != null) {
                     mFxRender.updateWavData(data);
                 }
@@ -74,7 +74,7 @@ public class MainFragment extends Fragment {
         mViewModel.getFftData().observe(getViewLifecycleOwner(), new Observer<float[]>() {
             @Override
             public void onChanged(float[] data) {
-                sLogger.trace("data.length=<{}>", data.length);
+                //sLogger.trace("data.length=<{}>", data.length);
                 if (mFxRender != null) {
                     mFxRender.updateFftData(data);
                 }
