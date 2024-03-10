@@ -64,19 +64,23 @@ public class AudioFxRender implements SurfaceHolder.Callback {
     }
 
     @Override // SurfaceHolder.Callback
-    synchronized public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        sLogger.trace("");
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        sLogger.trace("+");
         try {
             if (mThread != null) {
                 mThread.interrupt();
+                synchronized (AudioFxRender.this) {
+                    notifyAll();
+                }
                 mThread.join();
                 mThread = null;
             }
         } catch (InterruptedException ex) {
-            sLogger.warn("failed to join - {}", ex.getMessage());
+            sLogger.warn("interrupted - {}", ex.getMessage());
             Thread.currentThread().interrupt(); // Restore interrupted state
         }
         mSurface = null;
+        sLogger.trace("-");
     }
 
     synchronized void updateFftData(float[] data) {
@@ -121,7 +125,12 @@ public class AudioFxRender implements SurfaceHolder.Callback {
                     synchronized (AudioFxRender.this) {
                         if (!mDirty) {
                             //sLogger.trace("wait");
-                            AudioFxRender.this.wait();
+                            try {
+                                AudioFxRender.this.wait();
+                            } catch (InterruptedException ex) {
+                                sLogger.warn("interrupted - {}", ex.getMessage());
+                                Thread.currentThread().interrupt(); // Restore interrupted state
+                            }
                             //sLogger.trace("wakeup");
                             continue;
                         }
@@ -195,9 +204,8 @@ public class AudioFxRender implements SurfaceHolder.Callback {
                         }
                     }
                 }
-            } catch (InterruptedException ex) {
-                sLogger.warn("DrawTask exception:\n", ex);
-                Thread.currentThread().interrupt(); // Restore interrupted state
+            } catch (Exception ex) {
+                sLogger.warn("failed to draw - {}", ex.getMessage());
             }
             sLogger.trace("-");
         }
