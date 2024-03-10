@@ -50,7 +50,7 @@ public class ProtoPlayManager {
             AudioSinkVisualizer visualizer = new AudioSinkVisualizer(mSink)
                     .setSessionProvider(() -> sinkPlayer.getSessionId())
                     .setCallback((fmt, data) -> {
-                        sLogger.trace("fmt={} data.length={}", fmt, data.length);
+                        //sLogger.trace("fmt={} data.length={}", fmt, data.length);
                         if (mCallback != null) {
                             switch (fmt) {
                             case AudioSinkVisualizer.Callback.WAV: mCallback.onWavData(data); break;
